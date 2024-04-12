@@ -7,6 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvpWebApp", "MvpWebApp\MvpW
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvpWebAppClient", "MvpWebAppClient\MvpWebAppClient.csproj", "{782E2385-9860-4470-974A-186E046F72A7}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8E91C6B4-798B-43BF-AEA5-5E11A5DB3AD1}"
+	ProjectSection(SolutionItems) = preProject
+		Script\Script.md = Script\Script.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

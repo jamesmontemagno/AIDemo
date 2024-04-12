@@ -125,3 +125,65 @@ app.Run();
 ```
  
 With that, I asked a question like “How is the CosineSimilarity operator implemented?”
+
+
+
+```csharp
+using Microsoft.ML.Tokenizers;
+using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.Embeddings;
+using Microsoft.SemanticKernel.Text;
+using System.Numerics.Tensors;
+using System.Text;
+
+var builder = WebApplication.CreateBuilder(args);
+// 4
+builder.Services
+    .AddKernel()
+    .AddOpenAIChatCompletion("gpt-4", builder.Configuration["AI:OpenAI:APIKey"])
+    .AddOpenAITextEmbeddingGeneration("text-embedding-3-small", builder.Configuration["AI:OpenAI:APIKey"]);
+
+var app = builder.Build();
+// 2: Specifying tokenizer for chunking appropriately for GPT-4
+var tokenizer = await Tiktoken.CreateByModelNameAsync("gpt-4");
+
+
+// 1: Chunks of no more than 500 tokens & overlap chunks by 100 tokens. Token == Text + # associated with it
+// https://platform.openai.com/tokenizer
+var code = File.ReadAllLines(@"TensorPrimitives.netcore.cs");
+var chunks = TextChunker.SplitPlainTextParagraphs([.. code], 500, 100, null, text => tokenizer.CountTokens(text));
+
+
+// 3: Take chunks and create an in-memory vector database of embeddings for querying relevance 
+List<(string Content, ReadOnlyMemory<float> Vector)> db =
+    chunks.Zip(await app.Services.GetRequiredService<ITextEmbeddingGenerationService>().GenerateEmbeddingsAsync(chunks)).ToList();
+
+
+
+
+app.MapGet("/copilot", async (string question, Kernel kernel, ITextEmbeddingGenerationService embeddingService) =>
+{
+    var qe = await embeddingService.GenerateEmbeddingAsync(question);
+    var prompt = new StringBuilder("Please answer this question using the provided code: ")
+                    .AppendLine(question)
+                    .AppendLine("*** Code:");
+
+    int tokensRemaining = 2000;
+
+    // Find and append most relevant based on semantic meaning up to 2000 tokens to scope the context window
+    foreach (var c in db.OrderByDescending(c => TensorPrimitives.CosineSimilarity<float>(qe.Span, c.Vector.Span)))
+    {
+        if ((tokensRemaining -= tokenizer.CountTokens(c.Content)) < 0) 
+            break;
+
+        prompt.AppendLine(c.Content);
+
+    }
+
+    Console.WriteLine(prompt.ToString());
+
+    return kernel.InvokePromptStreamingAsync<string>(prompt.ToString());
+});
+
+app.Run();
+```
