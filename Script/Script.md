@@ -180,8 +180,6 @@ app.MapGet("/copilot", async (string question, Kernel kernel, ITextEmbeddingGene
 
     }
 
-    Console.WriteLine(prompt.ToString());
-
     return kernel.InvokePromptStreamingAsync<string>(prompt.ToString());
 });
 

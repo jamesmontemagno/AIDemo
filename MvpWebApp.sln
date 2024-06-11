@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvpWebAppClient", "MvpWebAp
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8E91C6B4-798B-43BF-AEA5-5E11A5DB3AD1}"
 	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
 		Script\Script.md = Script\Script.md
+		MvpWebApp\TensorPrimitives.netcore.cs = MvpWebApp\TensorPrimitives.netcore.cs
 	EndProjectSection
 EndProject
 Global

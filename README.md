@@ -8,6 +8,7 @@ For deeper dives into .NET and AI see:
 * [AI for .NET Developers documentation](https://learn.microsoft.com/dotnet/ai/)
 * [.NET AI Samples](https://github.com/dotnet/ai-samples)
 * [RAG with Azure and OpenAI Sample](https://github.com/Azure-Samples/azure-search-openai-demo-csharp)
+* [Semantic Kernel](https://learn.microsoft.com/semantic-kernel/overview/)
 
 
 ## Configuration
